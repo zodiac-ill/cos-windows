@@ -2,7 +2,7 @@
 
 #define DEBUG_DISPATCH false
 
-std::uint64_t ExtendedCCKeyboardDispatcher::g_lastTimestamp = 0ull;
+std::atomic<uint64_t> ExtendedCCKeyboardDispatcher::g_lastTimestamp = 0ull;
 cocos2d::CCEvent* ExtendedCCKeyboardDispatcher::g_currentEventInfo = nullptr;
 
 void ExtendedCCKeyboardDispatcher::setTimestamp(std::uint64_t timestamp) {
@@ -29,7 +29,7 @@ bool ExtendedCCKeyboardDispatcher::dispatchKeyboardMSG(cocos2d::enumKeyCodes key
 	return r;
 }
 
-std::uint64_t ExtendedCCTouchDispatcher::g_lastTimestamp = 0ull;
+std::atomic<std::uint64_t> ExtendedCCTouchDispatcher::g_lastTimestamp = 0ull;
 
 void ExtendedCCTouchDispatcher::setTimestamp(std::uint64_t timestamp) {
 	g_lastTimestamp = timestamp;

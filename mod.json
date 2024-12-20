@@ -1,5 +1,5 @@
 {
-	"geode": "3.0.0-beta.5",
+	"geode": "3.9.0",
 	"gd": {
 		"mac": "2.206",
 		"win": "2.206",
@@ -10,35 +10,6 @@
 	"tags": [
 		"gameplay", "performance", "enhancement"
 	],
-	"settings": {
-		"loop-style": {
-			"name": "Input Loop Type",
-			"description": "Determines the style of <cf>input loop</c> in use. This is an <cy>advanced option</c>, please avoid changing it unless you know what you are doing!\n<cc>Auto</c> selects the <cg>best choice</c> of loop from your setup. <co>Wait</c> will hold until a new input is received, which has increased precision and performance over <cf>Poll</c>. Using the wait option will also <cr>globally disable</c> controller support.",
-			"type": "string",
-			"one-of": ["auto", "poll", "wait"],
-			"default": "auto",
-			"platforms": ["win"]
-		},
-		"input-rate": {
-			"name": "Alternative Polling Rate",
-			"description": "Determines the <cc>amount of times per second</c> that inputs are read, which increases <cg>precision</c> at the cost of some <co>performance</c>. Extremely high values <cr>have little use</c> unless you are using a physics bypass. Has no effect unless the game is in the <cf>polling loop</c>.",
-			"type": "int",
-			"default": 720,
-			"min": 3,
-			"max": 2500,
-			"control": {
-				"slider": false
-			},
-			"platforms": ["win"]
-		},
-		"single-threaded": {
-			"name": "Run Single Threaded (req. restart)",
-			"description": "Runs the game on a single thread, interweaving input and rendering. This has significantly reduced performance, but may be more stable in some cases. It will also force the polling loop at all times. Input polling rate will be limited to the display refresh rate if this option and VSync are enabled. Most similar to the traditional TPS bypass/draw divide.",
-			"type": "bool",
-			"default": false,
-			"platforms": ["win"]
-		}
-	},
 	"id": "zmx.cbf-lite",
 	"name": "Click on Steps",
 	"developer": "zmx",

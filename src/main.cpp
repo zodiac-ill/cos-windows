@@ -28,7 +28,9 @@ std::uint64_t getTimestampCompat() {
 	return extendedInfo->getTimestamp();
 }
 
-void CustomGJBaseGameLayer::queueButton(int btnType, bool push, bool secondPlayer) {
+// i had to rename this function bc queueButton is inlined and Geode wont let you
+// try to hook inlined functions anymore
+void CustomGJBaseGameLayer::customQueueButton(int btnType, bool push, bool secondPlayer) {
 	// this is another workaround for it not being very easy to pass arguments to things
 	// oh well, ig
 
@@ -44,15 +46,6 @@ void CustomGJBaseGameLayer::queueButton(int btnType, bool push, bool secondPlaye
 		// holding at the start can queue a button before time is initialized
 		currentTime = 0;
 	}
-
-#ifdef GEODE_IS_ANDROID
-	// if time == 0, behavior should be equivalent to the original queuebutton (inserted immediately)
-	// we do this to support android, which has an unstable gd::vector::push_back
-	// also, this breaks windows bc we hook vector enqueue which tries to return back to here... yay
-	if (currentTime == 0) {
-		return GJBaseGameLayer::queueButton(btnType, push, secondPlayer);
-	}
-#endif
 
 #if DEBUG_STEPS
 	geode::log::debug("queueing input type={} down={} p2={} at time {} (ts {} -> {})", btnType, push, secondPlayer, currentTime, timeRelativeBegin, inputTimestamp);
@@ -103,13 +96,7 @@ void CustomGJBaseGameLayer::processTimedInputs() {
 			);
 #endif
 
-			// in this case, we push our handled inputs into the queue for the game to handle afterwards
-			// again, unnecessary if you could rewrite processQueuedButtons
-#ifdef GEODE_IS_ANDROID
-			queueButton(static_cast<int>(btn.m_button), btn.m_isPush, btn.m_isPlayer2);
-#else
 			this->m_queuedButtons.push_back(btn);
-#endif
 
 			if (!commands.empty()) {
 				nextTime = commands.front().m_step;
@@ -130,12 +117,7 @@ void CustomGJBaseGameLayer::dumpInputQueue() {
 			static_cast<int>(btn.m_button), btn.m_isPush, btn.m_isPlayer2, btn.m_step
 		);
 #endif
-
-#ifdef GEODE_IS_ANDROID
-		queueButton(static_cast<int>(btn.m_button), btn.m_isPush, btn.m_isPlayer2);
-#else
 		this->m_queuedButtons.push_back(btn);
-#endif
 	}
 }
 
@@ -158,14 +140,12 @@ void CustomGJBaseGameLayer::processCommands(float timeStep) {
 }
 
 void CustomGJBaseGameLayer::fixUntimedInputs() {
-#ifdef GEODE_IS_WINDOWS
 	// windows workaround as queueButton and its vector insert is supposedly inlined everywhere!!
 	// as long as this is called before the timestamp is cleared, it should work
 	for (const auto& btn : this->m_queuedButtons) {
-		this->queueButton(static_cast<int>(btn.m_button), btn.m_isPush, btn.m_isPlayer2);
+		this->customQueueButton(static_cast<int>(btn.m_button), btn.m_isPush, btn.m_isPlayer2);
 	}
 
 	this->m_queuedButtons.clear();
-#endif
 }
 

@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <unordered_set>
+#include <atomic>
 
 // returns the current time in ms, relative to whatever the system uses for input events
 // (usually system boot)
@@ -20,11 +21,12 @@ public:
 	std::uint64_t getTimestamp() const {
 		return m_timestamp;
 	}
+
 };
 
 struct ExtendedCCKeyboardDispatcher : geode::Modify<ExtendedCCKeyboardDispatcher, cocos2d::CCKeyboardDispatcher> {
 	// there's only one keyboard dispatcher ever and we can't really add new fields
-	static std::uint64_t g_lastTimestamp;
+	static std::atomic<std::uint64_t> g_lastTimestamp;
 	static void setTimestamp(std::uint64_t);
 
 	// this part is a little not ideal, but it's very hard to add a new parameter to the game
@@ -42,7 +44,7 @@ struct ExtendedCCKeyboardDispatcher : geode::Modify<ExtendedCCKeyboardDispatcher
 
 // all this has to do is add the timestamp to the event
 struct ExtendedCCTouchDispatcher : geode::Modify<ExtendedCCTouchDispatcher, cocos2d::CCTouchDispatcher> {
-	static std::uint64_t g_lastTimestamp;
+	static std::atomic<std::uint64_t> g_lastTimestamp;
 	static void setTimestamp(std::uint64_t);
 
 	static void onModify(auto& self) {
